@@ -2,6 +2,7 @@
 
 import ganache from 'ganache-cli'
 import { ethers } from 'ethers'
+import { expect } from 'chai'
 import {
   abi as factoryABI,
   bytecode as factoryCode,
@@ -12,7 +13,6 @@ import {
 } from '@kleros/tcr/build/contracts/EnhancedAppealableArbitrator.json'
 
 import { GTCRFactory } from '../src'
-import { expect } from 'chai'
 
 // Arbitrator and List Parameters
 const arbitratorExtraData = '0x85'

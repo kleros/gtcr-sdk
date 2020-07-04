@@ -2,7 +2,8 @@
   "name": "@kleros/gtcr-sdk",
   "version": "0.1.0",
   "description": "Read and write to/from Generalized TCRs",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "author": "Kleros",
   "license": "MIT",
   "private": false,
@@ -29,6 +30,7 @@
     "eslint-plugin-prettier": "^3.1.4",
     "ganache-cli": "^6.9.1",
     "husky": "^4.2.5",
+    "ipfs": "^0.47.0",
     "mocha": "^8.0.1",
     "prettier": "^2.0.5",
     "standard-version": "^8.0.0",
@@ -36,6 +38,7 @@
     "typescript": "^3.9.5"
   },
   "dependencies": {
+    "@kleros/gtcr-encoder": "^1.0.1",
     "@kleros/tcr": "^1.8.1-alpha.0",
     "bn.js": "^5.1.2",
     "ethers": "^5.0.3",
