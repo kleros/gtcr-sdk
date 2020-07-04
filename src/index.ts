@@ -32,7 +32,7 @@ export class GTCRFactory {
     this.blocksPerRequest = blocksPerMinute * 60 * 24 * 30 * 4
   }
 
-  public async getTCRAddresses() {
+  public async getTCRAddresses(): Promise<string[]> {
     // Fetch the addresses of TCRs deployed with this factory.
     const height = await this.provider.getBlockNumber()
 
