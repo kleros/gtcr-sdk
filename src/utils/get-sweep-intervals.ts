@@ -10,21 +10,21 @@ interface BlockInterval {
  * @param blocksPerRequest The number of blocks to scan per request.
  */
 export default function (
-    fromBlock: number,
-    height: number,
-    blocksPerRequest: number = 1000000
-  ) : BlockInterval[] {
-    // Fetching event logs in a single request can (this was happening) cause
-    // the provider to timeout the request.
-    // To get around this we can split it into multiple, smaller requests.
-    const totalBlocks = height - fromBlock;
-    const numRequests = Math.ceil(totalBlocks / blocksPerRequest);
-    const intervals = [{ fromBlock, toBlock: fromBlock + blocksPerRequest }];
-    for (let i = 1; i < numRequests; i++) {
-      intervals[i] = {
-        fromBlock: intervals[i - 1].toBlock + 1,
-        toBlock: intervals[i - 1].toBlock + 1 + blocksPerRequest,
-      };
+  fromBlock: number,
+  height: number,
+  blocksPerRequest = 1000000,
+): BlockInterval[] {
+  // Fetching event logs in a single request can (this was happening) cause
+  // the provider to timeout the request.
+  // To get around this we can split it into multiple, smaller requests.
+  const totalBlocks = height - fromBlock
+  const numRequests = Math.ceil(totalBlocks / blocksPerRequest)
+  const intervals = [{ fromBlock, toBlock: fromBlock + blocksPerRequest }]
+  for (let i = 1; i < numRequests; i++) {
+    intervals[i] = {
+      fromBlock: intervals[i - 1].toBlock + 1,
+      toBlock: intervals[i - 1].toBlock + 1 + blocksPerRequest,
     }
-    return intervals;
   }
+  return intervals
+}
