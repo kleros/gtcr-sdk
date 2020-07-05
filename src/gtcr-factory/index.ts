@@ -1,7 +1,7 @@
 import { ethers } from 'ethers'
 import { abi as _gtcrFactoryABI } from '@kleros/tcr/build/contracts/GTCRFactory.json'
 
-import getSweepIntervals from './utils/get-sweep-intervals'
+import getSweepIntervals from '../utils/get-sweep-intervals'
 
 export default class GTCRFactory {
   gtcrFactoryInstance: ethers.Contract

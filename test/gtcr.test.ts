@@ -68,7 +68,7 @@ const columns = [
   },
 ]
 
-describe('GeneralizedTCR', () => {
+describe('GeneralizedTCR', async () => {
   before(() => {
     fetchMock.mock(
       `${metaEvidenceGateway}${metaEvidenceURI}`,
@@ -92,6 +92,7 @@ describe('GeneralizedTCR', () => {
   let gtcrFactoryInstance: ethers.Contract
   let gtcrViewInstance: ethers.Contract
   let gtcrInstance: ethers.Contract
+  let gtcr: GeneralizedTCR
   let externalProvider:
     | ethers.providers.ExternalProvider
     | ethers.providers.JsonRpcFetchFunc
@@ -164,16 +165,17 @@ describe('GeneralizedTCR', () => {
     await gtcrInstance.addItem(encodedValues, {
       value: submissionBaseDeposit + arbitrationCost,
     })
-  })
 
-  it('Fetches an item from the list correctly', async () => {
-    const itemID = await gtcrInstance.itemList(0)
-    const gtcr = new GeneralizedTCR(
+    gtcr = new GeneralizedTCR(
       externalProvider,
       gtcrInstance.address,
       gtcrViewInstance.address,
       metaEvidenceGateway,
     )
+  })
+
+  it('Fetches an item from the list', async () => {
+    const itemID = await gtcrInstance.itemList(0)
 
     const item = await gtcr.getItem(itemID)
     expect(item.decodedData).to.deep.equal([
@@ -181,6 +183,55 @@ describe('GeneralizedTCR', () => {
       inputValues.Title,
       inputValues.Link,
       inputValues.Author,
+    ])
+  })
+
+  it('Fetches items from the list', async function () {
+    this.timeout(10000)
+
+    // Add a few more items
+    await Promise.all(
+      [...Array(3).keys()]
+        .map((i) => ({
+          // Items must be unique, modify a bit.
+          ...inputValues,
+          Title: inputValues.Title + i,
+        }))
+        .map((values) => gtcrEncode({ columns, values: values }))
+        .map((encodedValues) =>
+          gtcrInstance.addItem(encodedValues, {
+            value: submissionBaseDeposit + arbitrationCost,
+          }),
+        ),
+    )
+
+    const fetchedItems = await gtcr.getItems()
+    expect(fetchedItems.length).to.be.equal(4) // 1 item added in beforeEach.
+    expect(fetchedItems.map((item) => item.decodedData)).to.deep.equal([
+      [
+        '/ipfs/Qmbf...E4m4e/thumbnail.png',
+        'Some title2',
+        'http://example.com',
+        '0xdeadbeef',
+      ],
+      [
+        '/ipfs/Qmbf...E4m4e/thumbnail.png',
+        'Some title1',
+        'http://example.com',
+        '0xdeadbeef',
+      ],
+      [
+        '/ipfs/Qmbf...E4m4e/thumbnail.png',
+        'Some title0',
+        'http://example.com',
+        '0xdeadbeef',
+      ],
+      [
+        '/ipfs/Qmbf...E4m4e/thumbnail.png',
+        'Some title',
+        'http://example.com',
+        '0xdeadbeef',
+      ],
     ])
   })
 })
