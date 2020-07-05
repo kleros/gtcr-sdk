@@ -2,8 +2,9 @@
 
 import ganache from 'ganache-cli'
 import { ethers } from 'ethers'
+import fetchMock from 'fetch-mock'
 import { gtcrEncode } from '@kleros/gtcr-encoder'
-import IPFS from 'ipfs'
+import { expect } from 'chai'
 import { abi as gtcrABI } from '@kleros/tcr/build/contracts/GeneralizedTCR.json'
 import {
   abi as factoryABI,
@@ -34,7 +35,58 @@ const sharedStakeMultiplier = 5000
 const winnerStakeMultiplier = 2000
 const loserStakeMultiplier = 8000
 
-describe('GTCRFactory', () => {
+const metaEvidenceGateway = 'https://localhost'
+const metaEvidenceURI = `/ipfs/QmbQnE...`
+const inputValues = {
+  Thumbnail: '/ipfs/Qmbf...E4m4e/thumbnail.png',
+  Title: 'Some title',
+  Link: 'http://example.com',
+  Author: '0xdeadbeef',
+}
+
+// This is information available in the metadata field
+// of the meta evidence file. It is used to decode
+// and encode item data (since it is stored as a byte array)
+// on the blockchain.
+// For more information on meta evidence, see ERC-792 and ERC-1497.
+const columns = [
+  {
+    label: 'Thumbnail',
+    type: 'image',
+  },
+  {
+    label: 'Title',
+    type: 'text',
+  },
+  {
+    label: 'Link',
+    type: 'text',
+  },
+  {
+    label: 'Author',
+    type: 'text',
+  },
+]
+
+describe('GeneralizedTCR', () => {
+  before(() => {
+    fetchMock.mock(
+      `${metaEvidenceGateway}${metaEvidenceURI}`,
+      {
+        metadata: {
+          columns,
+        },
+      },
+      {
+        delay: 500, // fake a slow network
+      },
+    )
+  })
+
+  after(() => {
+    fetchMock.restore()
+  })
+
   let signer: ethers.providers.JsonRpcSigner
   let arbitratorInstance: ethers.Contract
   let gtcrFactoryInstance: ethers.Contract
@@ -87,50 +139,6 @@ describe('GTCRFactory', () => {
 
     // Deploy the factory.
     gtcrFactoryInstance = await gtcrFactoryFactory.deploy()
-
-    // Deploy a TCR.
-    // To deploy a TCR, we first need to produce a meta evidence file.
-    // This meta evidence file is then uploaded somewhere (usually ipfs) and
-    // its URI stored on event logs on the blockchain.
-    // For more information on meta evidence in general, see the ERC-792.
-    //
-    // In a Generalized TCR contract, items are stored as a byte array.
-    // To decode and encode the data, we need information on each column
-    // type. This information is included in a "metadata" field in
-    // the meta evidence file.
-    //
-    // So the in the next steps will do all that. Phew.
-
-    const node = await IPFS.create()
-    const columns = [
-      {
-        label: 'Thumbnail',
-        type: 'image',
-      },
-      {
-        label: 'Title',
-        type: 'text',
-      },
-      {
-        label: 'Link',
-        type: 'text',
-      },
-      {
-        label: 'Author',
-        type: 'text',
-      },
-    ]
-    const filesAdded = await node.add({
-      path: 'meta-evidence.son',
-      content: {
-        metadata: {
-          columns,
-        },
-      },
-    })
-
-    const metaEvidenceURI = `/ipfs/${filesAdded[0].hash}/${filesAdded[0].path}`
-
     await gtcrFactoryInstance.deploy(
       arbitratorInstance.address,
       arbitratorExtraData,
@@ -152,15 +160,6 @@ describe('GTCRFactory', () => {
       signer,
     )
 
-    const inputValues = {
-      Thumbnail:
-        '/ipfs/QmbfE4m4esbQ8gSYi83ptpRZggENaHhCWYTr6796Y1iRrk/high-impact-logo-.png',
-      Title: 'asd',
-      Link:
-        'http://localhost:3000/tcr/0x691C328745E4E090c80f4534f646684b418D1F6F',
-      Author: '0xdeadbeef',
-    }
-
     const encodedValues = gtcrEncode({ columns, values: inputValues })
     await gtcrInstance.addItem(encodedValues, {
       value: submissionBaseDeposit + arbitrationCost,
@@ -173,11 +172,15 @@ describe('GTCRFactory', () => {
       externalProvider,
       gtcrInstance.address,
       gtcrViewInstance.address,
+      metaEvidenceGateway,
     )
 
     const item = await gtcr.getItem(itemID)
-
-    // TODO: check that class returns expected output.
-    console.info(item)
+    expect(item.decodedData).to.deep.equal([
+      inputValues.Thumbnail,
+      inputValues.Title,
+      inputValues.Link,
+      inputValues.Author,
+    ])
   })
 })
