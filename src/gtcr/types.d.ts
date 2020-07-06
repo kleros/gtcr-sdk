@@ -35,7 +35,7 @@ interface Item {
   ID: string
   data: string
   status: number
-  disputed: false
+  disputed: false // Please note that the `disputed` field is not about whether the item is currently disputed or not, but rather if the latest request was ever disputed (i.e. if there was a dispute, and the final ruling was to accept the request, the item will have status 'Accepted' and disputed will still be `true`.
   resolved: false
   disputeID: BigNumber
   appealCost: BigNumber
@@ -55,4 +55,13 @@ interface Item {
   disputeStatus: number
   numberOfRequests: BigNumber
   decodedData: unknown[]
+}
+
+interface QueryOptions {
+  oldestFirst?: boolean
+  account?: string
+  page?: number
+  itemsPerPage?: number
+  itemsPerRequest?: number
+  filter?: boolean[]
 }

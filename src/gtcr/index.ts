@@ -6,7 +6,7 @@ import { abi as _gtcrViewABI } from '@kleros/tcr/build/contracts/GeneralizedTCRV
 
 import getSweepIntervals from '../utils/get-sweep-intervals'
 import { DEFAULT_FILTER } from '../utils/filter'
-import { MetaEvidence, Item } from './types'
+import { MetaEvidence, Item, QueryOptions } from './types'
 
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 const ZERO_BYTES32 =
@@ -74,6 +74,9 @@ export default class GeneralizedTCR {
       .map((e) => this.gtcrInstance.interface.parseLog(e))
   }
 
+  /**
+   * @returns {Promise<MetaEvidence[]>} The an array with the most recent meta evidence files for this TCR. First item is the meta evidence used for registration requests and the sencod item is the meta evidence used for removal requests.
+   */
   public async getLatestMetaEvidence(): Promise<MetaEvidence[]> {
     const metaEvidenceURIs = (await this.getEvents('MetaEvidence')).map(
       (e) => e.args._evidence,
@@ -95,6 +98,10 @@ export default class GeneralizedTCR {
     return [registrationMetaEvidence, removalMetaEvidence]
   }
 
+  /**
+   * @param {string} _itemID The item ID. The item ID is the keccak256 hash of its content.
+   * @returns {Promise<Item>} An object containing the item data as well as the state of the latest request. Please note that the `disputed` field is not about whether the item is currently disputed or not, but rather if the latest request was ever disputed (i.e. if there was a dispute, and the final ruling was to accept the request, the item will have status 'Accepted' and disputed will still be `true`.)
+   */
   public async getItem(_itemID: string): Promise<Item> {
     const [registrationMetaEvidence] = await this.getLatestMetaEvidence()
     const {
@@ -112,24 +119,31 @@ export default class GeneralizedTCR {
     }
   }
 
-  public async getItems(
-    _options = {
-      oldestFirst: false,
-      account: ZERO_ADDRESS,
-      page: 1,
-      itemsPerPage: 100,
-      itemsPerRequest: 10000,
-      filter: DEFAULT_FILTER,
-    },
-  ): Promise<Item[]> {
-    const {
-      itemsPerRequest,
-      oldestFirst,
-      account,
-      page,
-      itemsPerPage,
-      filter,
-    } = _options
+  /**
+   * @param {object} _options The query paramters.
+   * @param {boolean} _options.oldestFirst Whether to return the oldest items first. By default the query will return the newest items first.
+   * @param {boolean[]} _options.filter The filter to use when querying items. Each column in the array means.
+   * - Include absent items in result;
+   * - Include registered items in result;
+   * - Include items with registration requests that are not disputed in result;
+   * - Include items with clearing requests that are not disputed in result;
+   * - Include disputed items with registration requests in result;
+   * - Include disputed items with clearing requests in result;
+   * - Include items with a request by _party;
+   * - Include items challenged by _party.
+   * @param {number} _options.page The page to return. Takes into account the filter used.
+   * @param {number} _options.itemsPerPage The number of items per page.
+   * @param {number} _options.itemsPerRequest The number of items to scan for a given filter.
+   * @param {string} _options.account This is the Ethereum address used when filtering by requester and challenger.
+   * @returns {Promise<Item[]>} A list of items matching the filter criteria.
+   */
+  public async getItems(_options: QueryOptions): Promise<Item[]> {
+    const oldestFirst = _options.oldestFirst || false,
+      filter = _options.filter || DEFAULT_FILTER,
+      page = _options.page || 1,
+      itemsPerPage = _options.itemsPerPage || 100,
+      itemsPerRequest = _options.itemsPerRequest || 10000,
+      account = _options.account || ZERO_ADDRESS
 
     // The data must be fetched in batches to avoid timeouts.
     // We calculate the number of requests required according
@@ -159,7 +173,7 @@ export default class GeneralizedTCR {
     }
     const cursorIndex = Number(target[0])
 
-    // Edge case: Query items sets the cursor to the last item if
+    // Edge case: The queryItems function sets the cursor to the last item if
     // we are sorting by the newest items and the cursor index is 0.
     // This means we must take special care if the last page has a
     // single item.
@@ -191,7 +205,7 @@ export default class GeneralizedTCR {
     const {
       metadata: { columns },
     } = registrationMetaEvidence
-    const decodedData = encodedItems.map((item: any) => ({
+    const decodedData: Item[] = encodedItems.map((item: any) => ({
       ...item,
       decodedData: gtcrDecode({ columns, values: item.data }),
     }))

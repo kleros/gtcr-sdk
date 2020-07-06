@@ -10,7 +10,7 @@
   "repository": "git+https://github.com/kleros/gtcr-sdk",
   "scripts": {
     "build": "tsc",
-    "lint": "eslint '*/**/*.{js,ts}' --quiet --fix && tsc --noEmit",
+    "lint": "eslint 'src/**/*.{js,ts}' --fix && tsc --noEmit",
     "test": "cross-env TS_NODE_FILES=true mocha --exit --require ts-node/register --colors test/**/*.ts",
     "release": "standard-version"
   },
@@ -27,6 +27,7 @@
     "cross-env": "^7.0.2",
     "eslint": "^7.4.0",
     "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-jsdoc": "^28.6.1",
     "eslint-plugin-prettier": "^3.1.4",
     "fetch-mock": "^9.10.3",
     "ganache-cli": "^6.9.1",
