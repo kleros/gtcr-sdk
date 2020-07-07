@@ -137,7 +137,8 @@ export default class GeneralizedTCR {
    * @param {string} _options.account This is the Ethereum address used when filtering by requester and challenger.
    * @returns {Promise<Item[]>} A list of items matching the filter criteria.
    */
-  public async getItems(_options: QueryOptions): Promise<Item[]> {
+  public async getItems(_options?: QueryOptions): Promise<Item[]> {
+    _options = _options || {}
     const oldestFirst = _options.oldestFirst || false,
       filter = _options.filter || DEFAULT_FILTER,
       page = _options.page || 1,
