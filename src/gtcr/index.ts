@@ -82,6 +82,11 @@ export default class GeneralizedTCR {
       (e) => e.args._evidence,
     )
 
+    if (metaEvidenceURIs.length === 0)
+      throw new Error(
+        `Meta evidence found for TCR at ${this.gtcrInstance.address}`,
+      )
+
     const registrationMetaEvidenceURI =
       metaEvidenceURIs[metaEvidenceURIs.length - 2]
     const removalMetaEvidenceURI = metaEvidenceURIs[metaEvidenceURIs.length - 1]
