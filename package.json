@@ -1,6 +1,6 @@
 {
   "name": "@kleros/gtcr-sdk",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Read and write to/from Generalized TCRs",
   "main": "dist",
   "author": "Kleros",
