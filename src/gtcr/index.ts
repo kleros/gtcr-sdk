@@ -23,14 +23,18 @@ export default class GeneralizedTCR {
   constructor(
     _ethereum:
       | ethers.providers.ExternalProvider
-      | ethers.providers.JsonRpcFetchFunc,
+      | ethers.providers.JsonRpcFetchFunc
+      | ethers.providers.JsonRpcProvider,
     _tcrAddress: string,
     _tcrViewAddress: string,
     _gateway: string,
     _deploymentBlock = 0,
     blockTimeMilliseconds?: number,
   ) {
-    this.provider = new ethers.providers.Web3Provider(_ethereum)
+    this.provider =
+      _ethereum instanceof ethers.providers.JsonRpcProvider
+        ? _ethereum
+        : new ethers.providers.Web3Provider(_ethereum)
     this.gateway = _gateway
     this.gtcrInstance = new ethers.Contract(
       _tcrAddress,
