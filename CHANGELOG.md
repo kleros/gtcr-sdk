@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.0](https://github.com/kleros/gtcr-sdk/compare/v1.0.3...v1.1.0) (2020-07-22)
+
+
+### Features
+
+* accept JsonRpcProvider in constructor as well ([e978004](https://github.com/kleros/gtcr-sdk/commit/e97800491b53f66f0a946c574ae45dfe8ee27ff3))
+
 ### [1.0.3](https://github.com/kleros/gtcr-sdk/compare/v1.0.2...v1.0.3) (2020-07-07)
 
 
