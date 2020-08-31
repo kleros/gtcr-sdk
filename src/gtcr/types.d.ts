@@ -1,5 +1,24 @@
 import { BigNumber } from 'ethers'
 
+interface Column {
+  label: string
+  description: string
+  type: string
+  isIdentifier: boolean
+}
+
+interface Metadata {
+  tcrTitle: string
+  tcrDescription: string
+  columns: Column[]
+  itemName: string
+  itemNamePlural: string
+  logoURI: string
+  requireRemovalEvidence: boolean
+  isTCRofTCRs: boolean
+  relTcrDisabled: boolean
+}
+
 interface MetaEvidence {
   title: string
   description: string
@@ -11,24 +30,7 @@ interface MetaEvidence {
   question: string
   fileURI: string
   evidenceDisplayInterfaceURI: string
-  metadata: {
-    tcrTitle: string
-    tcrDescription: string
-    columns: [
-      {
-        label: string
-        description: string
-        type: string
-        isIdentifier: boolean
-      },
-    ]
-    itemName: string
-    itemNamePlural: string
-    logoURI: string
-    requireRemovalEvidence: true
-    isTCRofTCRs: false
-    relTcrDisabled: true
-  }
+  metadata: Metadata
 }
 
 interface Item {

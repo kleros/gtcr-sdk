@@ -2,9 +2,9 @@
 
 import ganache from 'ganache-cli'
 import { ethers } from 'ethers'
-import fetchMock from 'fetch-mock'
 import { gtcrEncode } from '@kleros/gtcr-encoder'
 import { expect } from 'chai'
+import * as MockServer from 'mockttp'
 import { abi as gtcrABI } from '@kleros/tcr/build/contracts/GeneralizedTCR.json'
 import {
   abi as factoryABI,
@@ -20,6 +20,9 @@ import {
 } from '@kleros/tcr/build/contracts/GeneralizedTCRView.json'
 
 import { GeneralizedTCR } from '../src'
+import { Item } from '../src/gtcr/types'
+
+const mockServer = MockServer.getLocal()
 
 // Arbitrator and List Parameters
 const arbitratorExtraData = '0x85'
@@ -35,8 +38,8 @@ const sharedStakeMultiplier = 5000
 const winnerStakeMultiplier = 2000
 const loserStakeMultiplier = 8000
 
-const metaEvidenceGateway = 'https://localhost'
-const metaEvidenceURI = `/ipfs/QmbQnE...`
+const metaEvidenceGateway = 'http://localhost:8080'
+const metaEvidenceURI = `/ipfs/QmbQnE`
 const inputValues = {
   Thumbnail: '/ipfs/Qmbf...E4m4e/thumbnail.png',
   Title: 'Some title',
@@ -67,24 +70,20 @@ const columns = [
     type: 'text',
   },
 ]
+const metaEvidence = {
+  metadata: { columns },
+}
 
 describe('GeneralizedTCR', async () => {
-  before(() => {
-    fetchMock.mock(
-      `${metaEvidenceGateway}${metaEvidenceURI}`,
-      {
-        metadata: {
-          columns,
-        },
-      },
-      {
-        delay: 500, // fake a slow network
-      },
-    )
+  before(async () => {
+    mockServer.start(8080)
+    await mockServer
+      .get(`${metaEvidenceGateway}${metaEvidenceURI}`)
+      .thenJson(200, metaEvidence)
   })
 
   after(() => {
-    fetchMock.restore()
+    mockServer.stop()
   })
 
   let signer: ethers.providers.JsonRpcSigner
@@ -207,7 +206,7 @@ describe('GeneralizedTCR', async () => {
 
     const fetchedItems = await gtcr.getItems()
     expect(fetchedItems.length).to.be.equal(4) // 1 item added in beforeEach.
-    expect(fetchedItems.map((item) => item.decodedData)).to.deep.equal([
+    expect(fetchedItems.map((item: Item) => item.decodedData)).to.deep.equal([
       [
         '/ipfs/Qmbf...E4m4e/thumbnail.png',
         'Some title2',
@@ -233,5 +232,10 @@ describe('GeneralizedTCR', async () => {
         '0xdeadbeef',
       ],
     ])
+  })
+
+  it('Fetches meta evidence from the list', async function () {
+    const [registrationMetaEvidence] = await gtcr.getLatestMetaEvidence()
+    expect(registrationMetaEvidence).to.deep.equal(metaEvidence)
   })
 })
