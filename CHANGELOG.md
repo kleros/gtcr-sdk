@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.3.0](https://github.com/kleros/gtcr-sdk/compare/v1.0.3...v1.3.0) (2020-09-01)
+
+
+### Features
+
+* accept JsonRpcProvider in constructor as well ([88b4d45](https://github.com/kleros/gtcr-sdk/commit/88b4d45d2ea147b4c0ca17935ed0de090ffac54b))
+
+
+### Bug Fixes
+
+* missing node-fetch dependency ([d5218c2](https://github.com/kleros/gtcr-sdk/commit/d5218c24143670042bc6c5373aecbd7a801b8a89))
+* mocked endpoints and add meta evidence test ([3f4694a](https://github.com/kleros/gtcr-sdk/commit/3f4694a368a3778097274f60c0807743c23d0004))
+
 ## [1.2.0](https://github.com/kleros/gtcr-sdk/compare/v1.0.3...v1.2.0) (2020-07-22)
 
 
