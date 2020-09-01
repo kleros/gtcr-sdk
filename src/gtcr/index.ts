@@ -1,7 +1,7 @@
 import { ethers, BigNumber } from 'ethers'
 import { gtcrDecode } from '@kleros/gtcr-encoder'
 import { LogDescription } from 'ethers/lib/utils'
-import fetch from 'node-fetch'
+import fetch from 'cross-fetch'
 import { abi as _gtcrABI } from '@kleros/tcr/build/contracts/GeneralizedTCR.json'
 import { abi as _gtcrViewABI } from '@kleros/tcr/build/contracts/GeneralizedTCRView.json'
 
