@@ -20,6 +20,7 @@ export default class GeneralizedTCR {
   provider: ethers.providers.JsonRpcProvider
   deploymentBlock: number
   gateway: string
+  network?: ethers.providers.Network
 
   constructor(
     _ethereum:
@@ -53,6 +54,13 @@ export default class GeneralizedTCR {
       60 / (blockTimeMilliseconds || 15000 / 1000),
     )
     this.blocksPerRequest = blocksPerMinute * 60 * 24 * 30 * 4
+  }
+
+  public async getNetwork(): Promise<ethers.providers.Network> {
+    if (this.network) return this.network
+
+    this.network = await this.provider.getNetwork()
+    return this.network
   }
 
   private async getEvents(eventName: string): Promise<LogDescription[]> {
@@ -89,7 +97,12 @@ export default class GeneralizedTCR {
 
     if (metaEvidenceURIs.length === 0)
       throw new Error(
-        `Meta evidence found for TCR at ${this.gtcrInstance.address}`,
+        `No meta evidence found for TCR at ${this.gtcrInstance.address}, ${
+          (await this.getNetwork()).name
+        }.${
+          this.deploymentBlock !== 0 &&
+          ' List deployment block set to ${this.deploymentBlock}'
+        }`,
       )
 
     const registrationMetaEvidenceURI =
