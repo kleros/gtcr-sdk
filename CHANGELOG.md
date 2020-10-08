@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.7.2](https://github.com/kleros/gtcr-sdk/compare/v1.7.0...v1.7.2) (2020-10-08)
+
+
+### Bug Fixes
+
+* missing allowed provider type in constructor ([e50218d](https://github.com/kleros/gtcr-sdk/commit/e50218da198bd277c1d2c8c715783dfe615b94ee))
+
 ### [1.7.1](https://github.com/kleros/gtcr-sdk/compare/v1.7.0...v1.7.1) (2020-10-08)
 
 ## [1.7.0](https://github.com/kleros/gtcr-sdk/compare/v1.0.3...v1.7.0) (2020-10-08)
