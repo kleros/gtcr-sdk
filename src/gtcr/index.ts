@@ -136,9 +136,25 @@ export default class GeneralizedTCR {
       _itemID,
     )
 
+    let challengeRemainingTime = 0
+    if (item.status > 1) {
+      // i.e. If it has a pending request.
+      const [challengePeriodDuration, block] = await Promise.all([
+        this.gtcrInstance.challengePeriodDuration(),
+        this.provider.getBlock('latest'),
+      ])
+
+      const { timestamp } = block
+      challengeRemainingTime =
+        Number(item.submissionTime) +
+        Number(challengePeriodDuration) -
+        timestamp
+    }
+
     return {
       ...item,
       decodedData: gtcrDecode({ columns, values: item.data }),
+      challengeRemainingTime,
     }
   }
 

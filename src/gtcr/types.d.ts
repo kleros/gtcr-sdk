@@ -57,6 +57,7 @@ interface Item {
   disputeStatus: number
   numberOfRequests: BigNumber
   decodedData: unknown[]
+  challengeRemainingTime: number
 }
 
 interface QueryOptions {
