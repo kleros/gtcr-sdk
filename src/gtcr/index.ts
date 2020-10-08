@@ -4,6 +4,7 @@ import { LogDescription } from 'ethers/lib/utils'
 import fetch from 'cross-fetch'
 import { abi as _gtcrABI } from '@kleros/tcr/build/contracts/GeneralizedTCR.json'
 import { abi as _gtcrViewABI } from '@kleros/tcr/build/contracts/GeneralizedTCRView.json'
+import { abi as _arbitratorABI } from '@kleros/erc-792/build/contracts/IArbitrator.json'
 
 import getSweepIntervals from '../utils/get-sweep-intervals'
 import { DEFAULT_FILTER } from '../utils/filter'
@@ -250,5 +251,61 @@ export default class GeneralizedTCR {
       decodedData: gtcrDecode({ columns, values: item.data }),
     }))
     return decodedData
+  }
+
+  /**
+   * Get the total amount of ETH (in wei) required to submit an item.
+   *
+   * @returns {Promise<BigNumber>}
+   */
+  public async getSubmissionDeposit(): Promise<BigNumber> {
+    const [
+      arbitratorAddress,
+      arbitratorExtraData,
+      submissionBaseDeposit,
+    ] = await Promise.all([
+      this.gtcrInstance.arbitrator(),
+      this.gtcrInstance.arbitratorExtraData(),
+      this.gtcrInstance.submissionBaseDeposit(),
+    ])
+
+    const arbitrator = new ethers.Contract(
+      arbitratorAddress,
+      _arbitratorABI,
+      this.provider,
+    )
+    const arbitrationCost = await arbitrator.arbitrationCost(
+      arbitratorExtraData,
+    )
+
+    return submissionBaseDeposit.add(arbitrationCost)
+  }
+
+  /**
+   * Get the total amount of ETH (in wei) required to challenge a submission.
+   *
+   * @returns {Promise<BigNumber>}
+   */
+  public async getSubmissionChallengeDeposit(): Promise<BigNumber> {
+    const [
+      arbitratorAddress,
+      arbitratorExtraData,
+      submissionChallengeBaseDeposit,
+    ] = await Promise.all([
+      this.gtcrInstance.arbitrator(),
+      this.gtcrInstance.arbitratorExtraData(),
+      this.gtcrInstance.submissionChallengeBaseDeposit(),
+    ])
+
+    const arbitrator = new ethers.Contract(
+      arbitratorAddress,
+      _arbitratorABI,
+      this.provider,
+    )
+    const arbitrationCost = await arbitrator.arbitrationCost(
+      arbitratorExtraData,
+    )
+
+    return submissionChallengeBaseDeposit.add(arbitrationCost)
   }
 }
