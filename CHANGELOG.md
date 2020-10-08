@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.6.0](https://github.com/kleros/gtcr-sdk/compare/v1.0.3...v1.6.0) (2020-10-08)
+
+
+### Features
+
+* accept JsonRpcProvider in constructor as well ([88b4d45](https://github.com/kleros/gtcr-sdk/commit/88b4d45d2ea147b4c0ca17935ed0de090ffac54b))
+* add methods to fetch submission and submission challenge deposits ([9f2b199](https://github.com/kleros/gtcr-sdk/commit/9f2b199a92715c26a691b6a179f044d8e5449822))
+* include remaining challenge time if any ([3dd2ae7](https://github.com/kleros/gtcr-sdk/commit/3dd2ae71a12a5d0a885c9ef499b14320118b3096))
+
+
+### Bug Fixes
+
+* missing node-fetch dependency ([d5218c2](https://github.com/kleros/gtcr-sdk/commit/d5218c24143670042bc6c5373aecbd7a801b8a89))
+* mocked endpoints and add meta evidence test ([3f4694a](https://github.com/kleros/gtcr-sdk/commit/3f4694a368a3778097274f60c0807743c23d0004))
+* unclear error message ([ede6b01](https://github.com/kleros/gtcr-sdk/commit/ede6b0178640c6834663a3697f970509dec18d9e))
+
 ## [1.5.0](https://github.com/kleros/gtcr-sdk/compare/v1.0.3...v1.5.0) (2020-10-08)
 
 
