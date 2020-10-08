@@ -35,7 +35,8 @@ export default class GeneralizedTCR {
     blockTimeMilliseconds?: number,
   ) {
     this.provider =
-      _ethereum instanceof ethers.providers.JsonRpcProvider
+      _ethereum instanceof ethers.providers.JsonRpcProvider ||
+      _ethereum instanceof ethers.providers.Web3Provider
         ? _ethereum
         : new ethers.providers.Web3Provider(_ethereum)
     this.gateway = _gateway
@@ -89,7 +90,7 @@ export default class GeneralizedTCR {
   }
 
   /**
-   * @returns {Promise<MetaEvidence[]>} The an array with the most recent meta evidence files for this TCR. First item is the meta evidence used for registration requests and the sencod item is the meta evidence used for removal requests.
+   * @returns {Promise<MetaEvidence[]>} The array with the most recent meta evidence files for this TCR. First item is the meta evidence used for registration requests and the sencod item is the meta evidence used for removal requests.
    */
   public async getLatestMetaEvidence(): Promise<MetaEvidence[]> {
     const metaEvidenceURIs = (await this.getEvents('MetaEvidence')).map(
@@ -256,7 +257,7 @@ export default class GeneralizedTCR {
   /**
    * Get the total amount of ETH (in wei) required to submit an item.
    *
-   * @returns {Promise<BigNumber>}
+   * @returns {Promise<BigNumber>} The ETH deposit in wei required to submit an item.
    */
   public async getSubmissionDeposit(): Promise<BigNumber> {
     const [
@@ -284,7 +285,7 @@ export default class GeneralizedTCR {
   /**
    * Get the total amount of ETH (in wei) required to challenge a submission.
    *
-   * @returns {Promise<BigNumber>}
+   * @returns {Promise<BigNumber>} The ETH deposit required to challenge a submission.
    */
   public async getSubmissionChallengeDeposit(): Promise<BigNumber> {
     const [
