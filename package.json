@@ -1,6 +1,6 @@
 {
   "name": "@kleros/gtcr-sdk",
-  "version": "1.7.0",
+  "version": "1.7.1",
   "description": "Read and write to/from Generalized TCRs",
   "main": "dist",
   "author": "Kleros",
@@ -11,7 +11,7 @@
     "build": "rimraf dist && tsc",
     "lint": "eslint 'src/**/*.{js,ts}' --fix && tsc --noEmit",
     "test": "cross-env TS_NODE_FILES=true mocha --exit --require ts-node/register --colors test/**/*.ts",
-    "release": "standard-version"
+    "release": "yarn build && standard-version"
   },
   "devDependencies": {
     "@commitlint/cli": "^9.0.1",
