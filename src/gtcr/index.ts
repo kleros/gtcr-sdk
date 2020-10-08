@@ -27,7 +27,8 @@ export default class GeneralizedTCR {
     _ethereum:
       | ethers.providers.ExternalProvider
       | ethers.providers.JsonRpcFetchFunc
-      | ethers.providers.JsonRpcProvider,
+      | ethers.providers.JsonRpcProvider
+      | ethers.providers.Web3Provider,
     _tcrAddress: string,
     _tcrViewAddress: string,
     _gateway: string,
