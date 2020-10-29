@@ -1,5 +1,5 @@
 <p align="center">
-  <b style="font-size: 32px;">Generalized TCR SDK</b>
+  <b style="font-size: 32px;">Curate SDK</b>
 </p>
 
 <p align="center">
