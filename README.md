@@ -8,4 +8,4 @@
   <a href="http://commitizen.github.io/cz-cli/"><img src="https://img.shields.io/badge/commitizen-friendly-brightgreen.svg" alt="Commitizen Friendly"></a>
 </p>
 
-An SDK to read and interact with Generalized TCR contracts.
+An SDK to read and interact with Curate contracts.
