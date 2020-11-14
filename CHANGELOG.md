@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.8.0](https://github.com/kleros/gtcr-sdk/compare/v1.7.2...v1.8.0) (2020-11-14)
+
+
+### Features
+
+* use latest view contract ([0582fbc](https://github.com/kleros/gtcr-sdk/commit/0582fbcb63d268d6ecda9ee50f84f17d6521d981))
+
+
+### Bug Fixes
+
+* typecheck errors ([2f8b307](https://github.com/kleros/gtcr-sdk/commit/2f8b307262873b7c4f3ee58639a0f268ab64d298))
+
 ### [1.7.2](https://github.com/kleros/gtcr-sdk/compare/v1.7.0...v1.7.2) (2020-10-08)
 
 
