@@ -8,7 +8,7 @@ import { abi as _arbitratorABI } from '@kleros/erc-792/build/contracts/IArbitrat
 
 import getSweepIntervals from '../utils/get-sweep-intervals'
 import { DEFAULT_FILTER } from '../utils/filter'
-import { MetaEvidence, Item, QueryOptions } from './types'
+import { MetaEvidence, Item, QueryOptions, QueryResult } from './types'
 
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 const ZERO_BYTES32 =
@@ -222,9 +222,9 @@ export default class GeneralizedTCR {
     // we are sorting by the newest items and the cursor index is 0.
     // This means we must take special care if the last page has a
     // single item.
-    let encodedItems: any
+    let queryResult: QueryResult
     if (cursorIndex === 0 && !oldestFirst && page !== 1)
-      encodedItems = await this.gtcrViewInstance.queryItems(
+      queryResult = await this.gtcrViewInstance.queryItems(
         this.gtcrInstance.address,
         0,
         1,
@@ -234,7 +234,7 @@ export default class GeneralizedTCR {
         limit,
       )
     else
-      encodedItems = await this.gtcrViewInstance.queryItems(
+      queryResult = await this.gtcrViewInstance.queryItems(
         this.gtcrInstance.address,
         cursorIndex,
         itemsPerPage,
@@ -245,14 +245,14 @@ export default class GeneralizedTCR {
       )
 
     // Filter out empty slots from the results.
-    encodedItems = encodedItems[0].filter(
-      (item: any) => item.ID !== ZERO_BYTES32,
+    const encodedItems: Item[] = queryResult.results.filter(
+      (item: Item) => item.ID !== ZERO_BYTES32,
     )
 
     const {
       metadata: { columns },
     } = registrationMetaEvidence
-    const decodedData: Item[] = encodedItems.map((item: any) => ({
+    const decodedData: Item[] = encodedItems.map((item: Item) => ({
       ...item,
       decodedData: gtcrDecode({ columns, values: item.data }),
     }))
