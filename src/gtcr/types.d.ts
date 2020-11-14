@@ -67,4 +67,5 @@ interface QueryOptions {
   itemsPerPage?: number
   itemsPerRequest?: number
   filter?: boolean[]
+  limit?: number
 }
