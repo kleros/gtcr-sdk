@@ -56,7 +56,7 @@ export default class GeneralizedTCR {
     const blocksPerMinute = Math.floor(
       60 / (blockTimeMilliseconds || 15000 / 1000),
     )
-    this.blocksPerRequest = blocksPerMinute * 60 * 24 * 30 * 4
+    this.blocksPerRequest = blocksPerMinute * 60 * 24 * 30 * 4 * 10
   }
 
   public async getNetwork(): Promise<ethers.providers.Network> {
@@ -177,6 +177,7 @@ export default class GeneralizedTCR {
    * @param {number} _options.itemsPerPage The number of items per page.
    * @param {number} _options.itemsPerRequest The number of items to scan for a given filter.
    * @param {string} _options.account This is the Ethereum address used when filtering by requester and challenger.
+   * @param {number} _options.limit The maximum number of items to return. If set to 0 will return _count items.
    * @returns {Promise<Item[]>} A list of items matching the filter criteria.
    */
   public async getItems(_options?: QueryOptions): Promise<Item[]> {
@@ -185,8 +186,9 @@ export default class GeneralizedTCR {
       filter = _options.filter || DEFAULT_FILTER,
       page = _options.page || 1,
       itemsPerPage = _options.itemsPerPage || 100,
-      itemsPerRequest = _options.itemsPerRequest || 10000,
-      account = _options.account || ZERO_ADDRESS
+      itemsPerRequest = _options.itemsPerRequest || 1000,
+      account = _options.account || ZERO_ADDRESS,
+      limit = _options.limit || 0
 
     // The data must be fetched in batches to avoid timeouts.
     // We calculate the number of requests required according
@@ -229,6 +231,7 @@ export default class GeneralizedTCR {
         filter,
         true,
         account,
+        limit,
       )
     else
       encodedItems = await this.gtcrViewInstance.queryItems(
@@ -238,6 +241,7 @@ export default class GeneralizedTCR {
         filter,
         oldestFirst,
         account,
+        limit,
       )
 
     // Filter out empty slots from the results.

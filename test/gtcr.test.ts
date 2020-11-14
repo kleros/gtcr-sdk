@@ -160,11 +160,6 @@ describe('GeneralizedTCR', async () => {
       signer,
     )
 
-    const encodedValues = gtcrEncode({ columns, values: inputValues })
-    await gtcrInstance.addItem(encodedValues, {
-      value: submissionBaseDeposit + arbitrationCost,
-    })
-
     gtcr = new GeneralizedTCR(
       externalProvider,
       gtcrInstance.address,
@@ -173,7 +168,19 @@ describe('GeneralizedTCR', async () => {
     )
   })
 
+  it('Fetches items from empty list', async function () {
+    this.timeout(10000)
+
+    const fetchedItems = await gtcr.getItems()
+    expect(fetchedItems.length).to.be.equal(0)
+  })
+
   it('Fetches an item from the list', async () => {
+    const encodedValues = gtcrEncode({ columns, values: inputValues })
+    await gtcrInstance.addItem(encodedValues, {
+      value: submissionBaseDeposit + arbitrationCost,
+    })
+
     const itemID = await gtcrInstance.itemList(0)
 
     const item = await gtcr.getItem(itemID)
@@ -187,6 +194,10 @@ describe('GeneralizedTCR', async () => {
 
   it('Fetches items from the list', async function () {
     this.timeout(10000)
+    const encodedValues = gtcrEncode({ columns, values: inputValues })
+    await gtcrInstance.addItem(encodedValues, {
+      value: submissionBaseDeposit + arbitrationCost,
+    })
 
     // Add a few more items
     await Promise.all(

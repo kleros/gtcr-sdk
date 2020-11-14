@@ -42,7 +42,7 @@
   "dependencies": {
     "@kleros/erc-792": "^4.0.1",
     "@kleros/gtcr-encoder": "^1.0.1",
-    "@kleros/tcr": "^1.8.1-alpha.0",
+    "@kleros/tcr": "^2.0.0",
     "@types/node-fetch": "^2.5.7",
     "bn.js": "^5.1.2",
     "cross-fetch": "^3.0.5",
