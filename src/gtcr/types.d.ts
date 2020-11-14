@@ -69,3 +69,8 @@ interface QueryOptions {
   filter?: boolean[]
   limit?: number
 }
+
+interface QueryResult {
+  hasMore: boolean
+  results: Item[]
+}
